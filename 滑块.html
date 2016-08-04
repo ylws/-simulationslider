@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>集控后台首页</title>
+
+<script src="jquery.min.1.10.1.js"></script>
+<style>
+	.container{
+		width: 300px;
+		height: 12px;
+		margin: 50px 0 0 300px;
+		position: relative;
+	}
+	.c_bg{
+		width: 300px;
+		height: 12px;
+		background: #000;
+		float: left;
+		position: relative;
+		left: 0;
+		z-index: 1;
+	}
+	.c_scroll{
+		width: 12px;
+		height: 12px;
+		background: #ff0;
+		position: absolute;
+		left: 0;
+		z-index: 2;
+	}
+	.c_left{
+		width: 0;
+		height: 12px;
+		float: left;
+		position: absolute;
+		left: 0;
+		background: #0ff;
+		z-index: 1;
+	}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="c_bg">
+			<div class="c_scroll"></div>
+			<div class="c_left"></div>
+		</div>
+	</div>
+	<p></p><i></i>
+	<script>
+		$(function(){
+			var slong=$(".c_bg").width();
+			var barlh=$(".c_scroll").width();
+			var cbgx=$(".c_bg").offset().left;
+			var cbgr=cbgx+slong;
+			var cbgy=$(".c_bg").offset().top;
+			var flag=false;
+			$(".c_scroll").mousedown(function(){
+				flag=true;
+				move();
+			}).mouseup(function(){
+				flag=false;
+				stop();
+				
+				//点击空白区域，隐藏select模拟	
+			})
+			function move(){
+				
+					$(document).mousemove(function (e) {
+						if(flag){
+						    $("p").text("X:" + e.pageX + "   Y:" + e.pageY); 
+						    var mx=e.pageX;
+						    var my=e.pageY;
+						    $("i").text(my)
+						    if(mx>=cbgx&&mx<=cbgr){
+						    	$(".c_scroll").css({"left":mx-cbgx+"px"});
+						    	$(".c_left").css("width",mx-cbgx+"px");
+						    }else if(mx<cbgx){
+						    	$(".c_scroll").css("left",0+"px");
+						    	$(".c_left").css("width",0+"px");
+						    }else{
+						    	$(".c_scroll").css({"left":slong+"px"});
+						    	$(".c_left").css("width",slong+"px");
+						    }
+				    }
+				});
+				
+			}
+			//停止mousemove事件
+			function stop(){
+				$(document).unbind("mousemove");
+			}
+			//当鼠标移动到scroll_left以外的区域，停止mousemove事件
+			$(document).on("mouseup",function(e){
+				flag=false;
+				var target = $(e.target);//获取点击时间
+				if(target.closest(".tree").length == 0)
+				{
+					if(e.pageY>cbgy+barlh||e.pageY<cbgy){
+						stop()
+					}
+				}
+			})
+		})
+
+	</script>
+</body>
+</html>
